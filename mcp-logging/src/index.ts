@@ -14,9 +14,12 @@ export class MyMCP extends McpAgent {
 		this.server.tool(
 			"add",
 			{ a: z.number(), b: z.number() },
-			async ({ a, b }) => ({
-				content: [{ type: "text", text: String(a + b) }],
-			})
+			async ({ a, b }) => {
+				const processId = Date.now().toString(); // Generate ID for tool log
+				return {
+					content: [{ type: "text", text: String(a + b) }],
+				};
+			}
 		);
 
 		// Calculator tool with multiple operations
@@ -28,7 +31,9 @@ export class MyMCP extends McpAgent {
 				b: z.number(),
 			},
 			async ({ operation, a, b }) => {
+				const processId = Date.now().toString(); 
 				let result: number;
+				console.log(`[${processId}] calculating ${operation} with ${a} and ${b}`);
 				switch (operation) {
 					case "add":
 						result = a + b;
@@ -40,7 +45,8 @@ export class MyMCP extends McpAgent {
 						result = a * b;
 						break;
 					case "divide":
-						if (b === 0)
+						if (b === 0) {
+							console.error(`[${processId}] Error: Cannot divide by zero`);
 							return {
 								content: [
 									{
@@ -49,9 +55,11 @@ export class MyMCP extends McpAgent {
 									},
 								],
 							};
+						}
 						result = a / b;
 						break;
 				}
+				console.log(`[${processId}] result: ${result}`);
 				return { content: [{ type: "text", text: String(result) }] };
 			}
 		);
@@ -60,15 +68,15 @@ export class MyMCP extends McpAgent {
 
 export default {
 	fetch(request: Request, env: Env, ctx: ExecutionContext) {
+		const processId = Date.now().toString();
+		console.log(`[${processId}] Received request for: ${request.url}`);
 		const url = new URL(request.url);
 
 		if (url.pathname === "/sse" || url.pathname === "/sse/message") {
-			// @ts-ignore
 			return MyMCP.serveSSE("/sse").fetch(request, env, ctx);
 		}
 
 		if (url.pathname === "/mcp") {
-			// @ts-ignore
 			return MyMCP.serve("/mcp").fetch(request, env, ctx);
 		}
 

@@ -4,9 +4,8 @@
  */
 {
 	"$schema": "node_modules/wrangler/config-schema.json",
-	"name": "mcp-server",
+	"name": "mcp-logging",
 	"main": "src/index.ts",
-	"account_id": "95437c835139b228336df1913750ad6e",
 	"compatibility_date": "2025-03-10",
 	"compatibility_flags": [
 		"nodejs_compat"
@@ -29,7 +28,8 @@
 	},
 	"observability": {
 		"enabled": true
-	}
+	},
+	"account_id": "95437c835139b228336df1913750ad6e"
 	/**
 	 * Smart Placement
 	 * Docs: https://developers.cloudflare.com/workers/configuration/smart-placement/#smart-placement
