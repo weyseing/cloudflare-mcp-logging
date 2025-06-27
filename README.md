@@ -18,10 +18,10 @@
 
 # Deploy CF Worker
 - Set CF account ID to **wrangler.jsonc**
-    > `"account_id": "95437c835139b228336df1913750ad6e"`
+    > `"account_id": "<EDIT-HERE>"`
 - Set CF API key in env
     - API's permission template: `Edit Cloudflare Workers`
-    - ENV: `CLOUDFLARE_API_TOKEN=<API-KEY-HERE>`
+    - ENV: `CLOUDFLARE_API_TOKEN=<EDIT-HERE>`
 - Deploy worker to CF
     - `npm run deploy` OR `npx wrangler deploy`
 
@@ -45,3 +45,4 @@
     >   }
     > }
     > ```
+

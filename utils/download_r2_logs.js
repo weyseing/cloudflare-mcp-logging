@@ -59,13 +59,15 @@ async function listR2Objects(s3Client, bucketName, prefix = "") {
             if (Contents) {
                 Contents.forEach(obj => {
                     allObjects.push(obj.Key);
-                    console.log(`  - ${obj.Key} (Size: ${obj.Size} bytes, Last Modified: ${obj.LastModified ? obj.LastModified.toISOString() : 'N/A'})`);
                 });
             }
             isTruncated = IsTruncated;
             continuationToken = NextContinuationToken;
         }
         console.log(`Total objects found: ${allObjects.length}`);
+        const lastTenObjects = allObjects.slice(-10);
+        console.log(`Last 10 objects:`);
+        lastTenObjects.forEach(key => console.log(`  - ${key}`));
         return allObjects;
     } catch (err) {
         console.error("Error listing objects:", err);
@@ -111,7 +113,6 @@ async function processLogFile(filePath) {
 }
 
 async function downloadAndDecompressFile(s3Client, bucketName, objectKey, localBasePath) {
-    console.log(`\n--- Attempting to download and process '${objectKey}' ---`);
     try {
         let localFileName = path.basename(objectKey);
         if (localFileName.endsWith('.gz')) {
@@ -131,13 +132,10 @@ async function downloadAndDecompressFile(s3Client, bucketName, objectKey, localB
             const isGzip = response.ContentType === 'application/gzip' || objectKey.endsWith('.gz');
 
             if (isGzip) {
-                console.log(`    Decompressing GZIP stream to '${localFilePath}'...`);
                 await pipe(response.Body, zlib.createGunzip(), fileWriteStream);
             } else {
-                console.log(`    Directly writing file to '${localFilePath}'...`);
                 await pipe(response.Body, fileWriteStream);
             }
-            console.log(`    Successfully downloaded and processed '${objectKey}' to '${localFilePath}'`);
 
             await processLogFile(localFilePath);
             return true;

@@ -14,12 +14,9 @@ export class MyMCP extends McpAgent {
 		this.server.tool(
 			"add",
 			{ a: z.number(), b: z.number() },
-			async ({ a, b }) => {
-				const processId = Date.now().toString(); // Generate ID for tool log
-				return {
-					content: [{ type: "text", text: String(a + b) }],
-				};
-			}
+			async ({ a, b }) => ({
+				content: [{ type: "text", text: String(a + b) }],
+			})
 		);
 
 		// Calculator tool with multiple operations
@@ -45,8 +42,7 @@ export class MyMCP extends McpAgent {
 						result = a * b;
 						break;
 					case "divide":
-						if (b === 0) {
-							console.error(`[${processId}] Error: Cannot divide by zero`);
+						if (b === 0)
 							return {
 								content: [
 									{
@@ -55,7 +51,6 @@ export class MyMCP extends McpAgent {
 									},
 								],
 							};
-						}
 						result = a / b;
 						break;
 				}
