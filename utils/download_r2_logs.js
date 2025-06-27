@@ -1,3 +1,4 @@
+// dependencies
 const { S3Client, ListObjectsV2Command, GetObjectCommand } = require("@aws-sdk/client-s3");
 const fs = require('fs-extra')
 const path = require('path');
@@ -17,7 +18,7 @@ const R2_LOG_BASE_PREFIX = process.env.R2_LOG_BASE_PREFIX || "";
 // pipeline 
 const pipe = promisify(pipeline);
 
-// save file path
+// download path
 const DOWNLOAD_DIR = "logs";
 
 async function getR2Client() {
@@ -182,15 +183,17 @@ async function main() {
         }
         console.log(`\n--- Listing R2 Logpush files from ${inputStartDate.toISOString()} to ${inputEndDate.toISOString()} (adjusted to SGT) ---`);
 
-        let allKeysDownloaded = [];
-        let currentDay = new Date(inputStartDate);
-        currentDay.setUTCHours(0, 0, 0, 0); 
         // s3 client
         const s3 = await getR2Client();
 
         // delete all existing files
         await fs.emptyDir(DOWNLOAD_DIR);
         console.log(`\n--- Cleared existing logs from: ${DOWNLOAD_DIR} ---`);
+        
+        // reset
+        let allKeysDownloaded = [];
+        let currentDay = new Date(inputStartDate);
+        currentDay.setUTCHours(0, 0, 0, 0); 
 
         // looping days
         while (currentDay.getTime() <= inputEndDate.getTime()) {
@@ -221,7 +224,6 @@ async function main() {
                 }
                 return false;
             });
-
             allKeysDownloaded = allKeysDownloaded.concat(filteredKeysForDay);
 
             // Move to the next day

@@ -46,3 +46,36 @@
     > }
     > ```
 
+# LogPush
+- Enable `logpush` for CF worker
+    - Set `"logpush": true` in **wrangler.jsonc**
+    - Deploy to CF & check settings
+
+![Screenshot](./assets/1.PNG)
+
+- Create **R2 API token**
+
+![Screenshot](./assets/2.PNG)
+
+- Create **R2 bucket**
+
+![Screenshot](./assets/3.PNG)
+
+- Create **LogPush job**
+
+![Screenshot](./assets/4.PNG)
+![Screenshot](./assets/5.PNG)
+![Screenshot](./assets/6.PNG)
+![Screenshot](./assets/7.PNG)
+![Screenshot](./assets/8.PNG)
+
+- Set **env** (edit the value)
+```shell
+R2_BUCKET_NAME="EDIT: R2 BUCKET NAME"
+R2_LOG_BASE_PREFIX="EDIT: R2 FOLDER NAME"
+CF_R2_ACCESS_KEY_ID="EDIT: R2 ACCESS KEY ID"
+CF_R2_SECRET_ACCESS_KEY="EDIT: R2 ACCESS SECRET"
+```
+
+- Run `utils/download_r2_logs.js` script to get logs
+    - `node utils/download_r2_logs.js --start-date "2025-06-27 07:00:00" --end-date "2025-06-27 08:00:00"`
