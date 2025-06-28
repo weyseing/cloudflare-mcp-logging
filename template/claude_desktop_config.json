@@ -3,10 +3,12 @@
     "Basic Calculator": {
       "command": "npx",
       "args": [
-        "mcp-remote",
+        "-y",
+        "supergateway",
+        "--sse",
         "http://localhost:8787/sse",
-        "--header",
-        "X-Auth:userID_user123,skey_secret_abc"
+        "--header", "X-UserID:ID_user123",
+        "--header", "X-SecretKey:skey_secret_abc"
       ]
     }
   }

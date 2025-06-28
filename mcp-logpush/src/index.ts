@@ -2,7 +2,7 @@ import { McpAgent } from "agents/mcp";
 import { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js";
 import { z } from "zod";
 
-// Define our MCP agent with tools
+
 export class MyMCP extends McpAgent {
 	server = new McpServer({
 		name: "Authless Calculator",
@@ -16,16 +16,14 @@ export class MyMCP extends McpAgent {
 			{
 				operation: z.enum(["add", "subtract", "multiply", "divide"]),
 				a: z.number(),
-				b: z.number(),
+				b: z.number()
 			},
-			async ({ operation, a, b }) => {
+			async ({ operation, a, b}) => {
 				try {
 					// pid
 					const processId = Date.now().toString(); 
 					console.log(`[${processId}] calculating ${operation} with ${a} and ${b}`);
 
-					// header
-					
 
 					// calc operation
 					let result: number;
@@ -66,27 +64,11 @@ export class MyMCP extends McpAgent {
 
 export default {
 	fetch(request: Request, env: Env, ctx: ExecutionContext) {
-		// auth header
-		const authData = request.headers.get('X-Auth');
-		if (authData) {
-			const parts = authData.split(',');
-			let userId: string | undefined;
-			let secretKey: string | undefined;
-			for (const part of parts) {
-				if (part.startsWith('userID_')) {
-					userId = part.substring('userID_'.length);
-				} else if (part.startsWith('skey_')) {
-					secretKey = part.substring('skey_'.length);
-				}
-			}
-			if (userId)
-				console.log(`Parsed UserId from X-Auth-Data: ${userId}`);
-			if (secretKey) 
-				console.log(`Parsed SecretKey from X-Auth-Data: ${secretKey}`);
-		} else {
-			console.log(`X-Auth-Data header not found.`);
-		}
+		const userId: string | null = request.headers.get('X-UserID');
+		const secretKey: string | null  = request.headers.get('X-SecretKey');
+		console.log(`HEADER: ${userId} --- ${secretKey}`);
 
+		// routing
 		const url = new URL(request.url);
 		if (url.pathname === "/sse" || url.pathname === "/sse/message") {
 			return MyMCP.serveSSE("/sse").fetch(request, env, ctx);
