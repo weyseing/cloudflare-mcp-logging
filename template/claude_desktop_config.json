@@ -1,0 +1,13 @@
+{
+  "mcpServers": {
+    "Basic Calculator": {
+      "command": "npx",
+      "args": [
+        "mcp-remote",
+        "http://localhost:8787/sse",
+        "--header",
+        "X-Auth:userID_user123,skey_secret_abc"
+      ]
+    }
+  }
+}
