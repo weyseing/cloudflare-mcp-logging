@@ -20,9 +20,7 @@ export class MyMCP extends McpAgent {
 			},
 			async ({ operation, a, b,}) => {
 				try {
-					// pid
-					const processId = Date.now().toString(); 
-					console.log(`[${processId}] calculating ${operation} with ${a} and ${b}`);
+					const processId = this.props.processId;
 
 					// userID & secret key
 					const userId: string | null = this.props.userId as string;
@@ -69,10 +67,15 @@ export class MyMCP extends McpAgent {
 
 export default {
 	fetch(request: Request, env: Env, ctx: ExecutionContext) {
+		// pid
+		const processId = Date.now().toString(); 
+
 		// userID & secret key from header
 		const userId: string | null = request.headers.get('X-UserID');
 		const secretKey: string | null  = request.headers.get('X-SecretKey');
-		ctx.props = { userId, secretKey };
+
+		// context
+		ctx.props = { processId, userId, secretKey };
 
 		// routing
 		const url = new URL(request.url);
