@@ -30,16 +30,37 @@
     > `npx @modelcontextprotocol/inspector@latest`
 
 # Connect via MCP Host/Client
-- Ensure `mcp-remote` is installed
-    > npm install mcp-remote
-- MCP server config
+- **mcp-remote**
     > ```json
     > {
     >   "mcpServers": {
     >     "CF Remote MCP": {
-    >       "command": "mcp-remote",
+    >       "command": "npx",
     >       "args": [
+    >         "-y",
+    >         "mcp-remote",
     >         "https://<MCP_SERVER_URL>/sse"
+    >       ]
+    >     }
+    >   }
+    > }
+    > ```
+
+- **supergateway**
+    > ```json
+    > {
+    >   "mcpServers": {
+    >     "Basic Calculator": {
+    >       "command": "npx",
+    >       "args": [
+    >         "-y",
+    >         "supergateway",
+    >         "--sse",
+    >         "http://localhost:8787/sse",
+    >         "--header",
+    >         "X-UserID:USERID_123",
+    >         "--header",
+    >         "X-SecretKey:SKEY_456"
     >       ]
     >     }
     >   }
@@ -93,15 +114,15 @@ CF_R2_SECRET_ACCESS_KEY="EDIT: R2 ACCESS SECRET"
 - Use `this.props.<VARIABLE_NAME>` in **tool**.
     > ```javascript
     > this.server.tool(
-    > 			"calculate",
-    > 			{
-    > 				operation: z.enum(["add", "subtract", "multiply", "divide"]),
-    > 				a: z.number(),
-    > 				b: z.number()
-    > 			},
-    > 			async ({ operation, a, b,}) => {
-    > 				try {
-    > 					// retrieve here
-    > 					const userId: string | null = this.props.userId as string;
-    > 					const secretKey: string | null  = this.props.secretKey as string;
+    >     "calculate",
+    >     {
+    >         operation: z.enum(["add", "subtract", "multiply", "divide"]),
+    >         a: z.number(),
+    >         b: z.number()
+    >     },
+    >     async ({ operation, a, b,}) => {
+    >         try {
+    >             // retrieve here
+    >             const userId: string | null = this.props.userId as string;
+    >             const secretKey: string | null  = this.props.secretKey as string;
     > ```
