@@ -79,3 +79,29 @@ CF_R2_SECRET_ACCESS_KEY="EDIT: R2 ACCESS SECRET"
 
 - Run `utils/download_r2_logs.js` script to get logs
     - `node utils/download_r2_logs.js --start-date "2025-06-27 07:00:00" --end-date "2025-06-27 08:00:00"`
+
+# Pass Variable to Tool Function
+- Set `ctx.props` in **fetch entrypoint**.
+    > ```javascript
+    > export default {
+    > 	fetch(request: Request, env: Env, ctx: ExecutionContext) {
+    > 		const userId: string | null = request.headers.get('X-UserID');
+    > 		const secretKey: string | null  = request.headers.get('X-SecretKey');
+    > 		ctx.props = { userId, secretKey }; // add this
+    > ```
+
+- Use `this.props.<VARIABLE_NAME>` in **tool**.
+    > ```javascript
+    > this.server.tool(
+    > 			"calculate",
+    > 			{
+    > 				operation: z.enum(["add", "subtract", "multiply", "divide"]),
+    > 				a: z.number(),
+    > 				b: z.number()
+    > 			},
+    > 			async ({ operation, a, b,}) => {
+    > 				try {
+    > 					// retrieve here
+    > 					const userId: string | null = this.props.userId as string;
+    > 					const secretKey: string | null  = this.props.secretKey as string;
+    > ```

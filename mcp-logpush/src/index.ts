@@ -1,7 +1,6 @@
+import { z } from "zod";
 import { McpAgent } from "agents/mcp";
 import { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js";
-import { z } from "zod";
-
 
 export class MyMCP extends McpAgent {
 	server = new McpServer({
@@ -13,20 +12,26 @@ export class MyMCP extends McpAgent {
 		// calculator tool
 		this.server.tool(
 			"calculate",
+			"Performs basic arithmetic operations (add, subtract, multiply, divide) on two numbers.",
 			{
 				operation: z.enum(["add", "subtract", "multiply", "divide"]),
 				a: z.number(),
 				b: z.number()
 			},
-			async ({ operation, a, b}) => {
+			async ({ operation, a, b,}) => {
 				try {
 					// pid
 					const processId = Date.now().toString(); 
 					console.log(`[${processId}] calculating ${operation} with ${a} and ${b}`);
 
+					// userID & secret key
+					const userId: string | null = this.props.userId as string;
+					const secretKey: string | null  = this.props.secretKey as string;
+					console.log(`[${processId}] UserID: ${userId}`);
+					console.log(`[${processId}] SecretKey: ${secretKey}`);
 
 					// calc operation
-					let result: number;
+					let result: number = 0;
 					switch (operation) {
 						case "add":
 							result = a + b;
@@ -34,7 +39,7 @@ export class MyMCP extends McpAgent {
 						case "subtract":
 							result = a - b;
 							break;
-						case "multiply":
+						case "multiply":							
 							result = a * b;
 							break;
 						case "divide":
@@ -64,9 +69,10 @@ export class MyMCP extends McpAgent {
 
 export default {
 	fetch(request: Request, env: Env, ctx: ExecutionContext) {
+		// userID & secret key from header
 		const userId: string | null = request.headers.get('X-UserID');
 		const secretKey: string | null  = request.headers.get('X-SecretKey');
-		console.log(`HEADER: ${userId} --- ${secretKey}`);
+		ctx.props = { userId, secretKey };
 
 		// routing
 		const url = new URL(request.url);
