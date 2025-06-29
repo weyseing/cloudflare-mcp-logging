@@ -1,4 +1,4 @@
-# Setup: -
+# Setup
 - Start up container
     > `docker compose up -d`
 - Initialize **package.json**
